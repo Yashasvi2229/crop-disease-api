@@ -61,7 +61,7 @@ Example format: ["Recommendation 1", "Recommendation 2", ...]
                     "content": prompt
                 }
             ],
-            model="llama-3.1-70b-versatile",  # Fast and capable model
+            model="llama-3.3-70b-versatile",  # Updated to current model
             temperature=0.7,
             max_tokens=500
         )
