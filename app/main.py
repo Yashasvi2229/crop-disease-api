@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routes.predict import router as predict_router
+from app.routes.chat import router as chat_router
 
 app = FastAPI(title="Crop Disease Classification API")
 
@@ -16,6 +17,9 @@ app.add_middleware(
 # Include the predict route
 app.include_router(predict_router)
 
+# Include the chat route
+app.include_router(chat_router)
+
 @app.get("/")
 def home():
-    return {"message": "Welcome to the Crop Disease Classification API"}
+    return {"message": "Welcome to the AgroWise API - Crop Disease Detection & AI Chat"}

@@ -116,3 +116,82 @@ def get_fallback_recommendations(crop: str, disease: str, language: str) -> list
     }
     
     return fallback.get(language, fallback["en"])
+
+
+def get_chat_response(question: str, language: str = "en") -> str:
+    """
+    Get AI chat response for agricultural questions using Groq LLM.
+    
+    Args:
+        question: User's farming question
+        language: Language code (en, hi, ta, te)
+    
+    Returns:
+        AI-generated answer
+    """
+    try:
+        # Initialize Groq client
+        api_key = os.getenv("GROQ_API_KEY")
+        if not api_key:
+            print("⚠️ WARNING: GROQ_API_KEY not set for chat")
+            return get_fallback_chat_response(question, language)
+        
+        print(f"✅ Using Groq LLM for chat: {question[:50]}...")
+        client = Groq(api_key=api_key)
+        
+        # Language mapping
+        language_names = {
+            "en": "English",
+            "hi": "Hindi",
+            "ta": "Tamil",
+            "te": "Telugu"
+        }
+        lang_name = language_names.get(language, "English")
+        
+        # Create prompt for agricultural chat
+        prompt = f"""You are AgroWise, an expert agricultural advisor helping farmers with their questions.
+
+User's question: {question}
+
+Provide a helpful, practical answer in {lang_name}. Focus on:
+- Actionable farming advice
+- Specific techniques and methods
+- Best practices for Indian agriculture
+- Local farming context
+
+Keep your answer concise (3-5 sentences) and farmer-friendly."""
+        
+        # Call Groq API
+        response = client.chat.completions.create(
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are AgroWise, an expert agricultural advisor providing practical farming advice to Indian farmers. Give concise, actionable answers."
+                },
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            model="llama-3.3-70b-versatile",
+            temperature=0.7,
+            max_tokens=300
+        )
+        
+        answer = response.choices[0].message.content.strip()
+        print(f"📝 Chat Response: {answer[:100]}...")
+        
+        return answer
+        
+    except Exception as e:
+        print(f"Error calling Groq API for chat: {e}")
+        return get_fallback_chat_response(question, language)
+
+
+def get_fallback_chat_response(question: str, language: str) -> str:
+    """Fallback chat response if LLM fails."""
+    fallback = {
+        "en": f"Thank you for your question: '{question}'. The AgroWise AI system would normally provide expert farming advice. Please ensure the system is properly configured for real-time responses.",
+        "hi": f"आपके प्रश्न के लिए धन्यवाद: '{question}'। AgroWise AI सिस्टम सामान्य रूप से विशेषज्ञ कृषि सलाह प्रदान करता है। कृपया सुनिश्चित करें कि सिस्टम वास्तविक समय प्रतिक्रियाओं के लिए ठीक से कॉन्फ़िगर किया गया है।"
+    }
+    return fallback.get(language, fallback["en"])
