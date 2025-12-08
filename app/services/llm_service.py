@@ -18,9 +18,10 @@ def get_disease_recommendations(crop: str, disease: str, language: str = "en") -
         # Initialize Groq client
         api_key = os.getenv("GROQ_API_KEY")
         if not api_key:
-            print("Warning: GROQ_API_KEY not set, using fallback recommendations")
+            print("⚠️ WARNING: GROQ_API_KEY not set, using fallback recommendations")
             return get_fallback_recommendations(crop, disease, language)
         
+        print(f"✅ Using Groq LLM for {crop} - {disease}")
         client = Groq(api_key=api_key)
         
         # Language mapping for prompts
@@ -67,6 +68,7 @@ Example format: ["Recommendation 1", "Recommendation 2", ...]
         
         # Extract recommendations from response
         recommendations_text = response.choices[0].message.content.strip()
+        print(f"📝 LLM Response: {recommendations_text[:100]}...")  # Log first 100 chars
         
         # Try to parse as JSON
         try:
