@@ -29,7 +29,8 @@ def get_disease_recommendations(crop: str, disease: str, language: str = "en") -
             "en": "English",
             "hi": "Hindi",
             "ta": "Tamil",
-            "te": "Telugu"
+            "te": "Telugu",
+            "pa": "Punjabi"
         }
         
         lang_name = language_names.get(language, "English")
@@ -144,7 +145,8 @@ def get_chat_response(question: str, language: str = "en") -> str:
             "en": "English",
             "hi": "Hindi",
             "ta": "Tamil",
-            "te": "Telugu"
+            "te": "Telugu",
+            "pa": "Punjabi"
         }
         lang_name = language_names.get(language, "English")
         
