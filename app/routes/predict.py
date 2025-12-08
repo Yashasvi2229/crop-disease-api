@@ -1,6 +1,7 @@
 from fastapi import APIRouter, File, UploadFile, HTTPException
 from app.model.model_loader import load_trained_model
 from app.model.preprocess import preprocess_image
+from app.services.llm_service import get_disease_recommendations
 import numpy as np
 
 # Define the router
@@ -52,25 +53,39 @@ async def predict(file: UploadFile = File(...)):
 
         confidence = float(confidence)
         
+        # Generate disease-specific recommendations using LLM
+        recommendations = get_disease_recommendations(
+            crop=predicted_crop,
+            disease=predicted_disease,
+            language="en"  # You can make this configurable later
+        )
+        
         if predicted_disease == "healthy":
             return{
                 "predicted_class": predicted_class,
                 "predicted_crop": predicted_crop,
                 "isHealthy": "Healthy",
                 "predicted_diseases": "Null",
-                "confidence_percentage": confidence              
+                "confidence_percentage": confidence,
+                "recommendations": [
+                    f"Your {predicted_crop} plant appears healthy!",
+                    "Continue regular watering and fertilizing schedule",
+                    "Monitor for any changes in leaf color or texture",
+                    "Ensure proper sunlight and air circulation"
+                ]
             }
         else:
             diseases = predicted_disease
 
 
-        # Return the formatted response
+        # Return the formatted response with LLM recommendations
         return {
             "predicted_class": predicted_class,
             "predicted_crop": predicted_crop,
             "isHealthy": "Unhealthy",
             "predicted_diseases": diseases,
-            "confidence_percentage": confidence
+            "confidence_percentage": confidence,
+            "recommendations": recommendations
         }
 
     except Exception as e:
