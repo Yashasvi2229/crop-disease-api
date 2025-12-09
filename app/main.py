@@ -1,25 +1,27 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes.predict import router as predict_router
-from app.routes.chat import router as chat_router
+from fastapi.middleware.cors import CORSMiddleware
+from app.routes import predict, chat, market_prices
 
-app = FastAPI(title="Crop Disease Classification API")
+app = FastAPI(title="AgroWise Crop Disease Detector API")
 
-# Add CORS middleware to allow web browser access
+# CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins for demo (restrict in production)
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Include the predict route
-app.include_router(predict_router)
-
-# Include the chat route
-app.include_router(chat_router)
+# Include routers
+app.include_router(predict.router, prefix="/api", tags=["predict"])
+app.include_router(chat.router, prefix="/api", tags=["chat"])
+app.include_router(market_prices.router, prefix="/api", tags=["market_prices"])
 
 @app.get("/")
-def home():
-    return {"message": "Welcome to the AgroWise API - Crop Disease Detection & AI Chat"}
+def read_root():
+    return {
+        "message": "AgroWise Crop Disease Detector API with AI Chat, Weather & Market Prices",
+        "endpoints": ["/api/predict", "/api/chat", "/api/market-prices"]
+    }
