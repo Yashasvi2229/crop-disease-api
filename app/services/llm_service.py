@@ -35,10 +35,20 @@ def get_disease_recommendations(crop: str, disease: str, language: str = "en") -
         
         lang_name = language_names.get(language, "English")
         
+        # Enhanced prompt with stronger language emphasis
+        if language == "pa":
+            lang_instruction = f"You MUST respond ONLY in Punjabi (ਪੰਜਾਬੀ). Use Gurmukhi script. Do not use any English except for technical terms that have no Punjabi equivalent."
+        elif language == "hi":
+            lang_instruction = f"You MUST respond ONLY in Hindi (हिंदी). Use Devanagari script. Do not use any English except for technical terms that have no Hindi equivalent."
+        else:
+            lang_instruction = f"Respond in {lang_name}."
+        
         # Create prompt for LLM
         prompt = f"""You are an expert agricultural advisor. A farmer has detected {disease} on their {crop} plant.
 
-Provide 5-6 specific, actionable recommendations for treating this disease in {lang_name}.
+{lang_instruction}
+
+Provide 5-6 specific, actionable recommendations for treating this disease.
 
 Requirements:
 - Each recommendation should be 1-2 sentences
