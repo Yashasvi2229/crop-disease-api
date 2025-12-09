@@ -27,11 +27,12 @@ class_names = [
 ]
 
 @router.post("/predict", summary="Predict Crop Disease")
-async def predict(file: UploadFile = File(...)):
+async def predict(file: UploadFile = File(...), language: str = "en"):
     """
     Predict the crop disease from the uploaded image.
     Args:
         file (UploadFile): The uploaded image file.
+        language (str): Language code (en, hi, pa, ta, te) for recommendations
     Returns:
         dict: Prediction result with predicted class, crop, disease, and confidence percentage.
     """
@@ -53,11 +54,11 @@ async def predict(file: UploadFile = File(...)):
 
         confidence = float(confidence)
         
-        # Generate disease-specific recommendations using LLM
+        # Generate disease-specific recommendations using LLM with user's language
         recommendations = get_disease_recommendations(
             crop=predicted_crop,
             disease=predicted_disease,
-            language="en"  # You can make this configurable later
+            language=language  # Use the language parameter
         )
         
         if predicted_disease == "healthy":
