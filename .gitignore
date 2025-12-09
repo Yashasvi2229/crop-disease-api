@@ -1,2 +1,28 @@
+# Environment files
+.env
+.env.*
+
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+env/
+
+# Model files
+*.h5
+*.keras
+trained_model.keras
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
